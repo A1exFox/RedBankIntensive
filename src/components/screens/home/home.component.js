@@ -9,9 +9,12 @@ export class Home extends BaseScreen {
 	constructor() {
 		super({ title: 'Home' })
 	}
+
 	render() {
 		const element = renderService.htmlToElement(template, [], styles)
-		$R(element).find('h1').css('color', 'yellow')
-		return element.outerHTML
+
+		$R(element).find('h1').css('color', 'green')
+
+		return element
 	}
 }

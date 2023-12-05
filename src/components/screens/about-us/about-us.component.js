@@ -4,7 +4,8 @@ export class AboutUs extends BaseScreen {
 	constructor() {
 		super({ title: 'About us' })
 	}
+
 	render() {
-		return `<p>About us</p>`
+		return '<p>About us</p>'
 	}
 }

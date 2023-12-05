@@ -10,21 +10,26 @@ class RenderService {
 	htmlToElement(html, components = [], styles) {
 		const template = document.createElement('template')
 		template.innerHTML = html.trim()
+
 		const element = template.content.firstChild
+
 		if (styles) {
 			this.#applyModuleStyles(styles, element)
 		}
+
 		this.#replaceComponentTags(element, components)
+
 		return element
 	}
+
 	/**
 	 * @param {HTMLElement} parentElement
 	 * @param {Array} components
 	 */
 	#replaceComponentTags(parentElement, components) {
-		// const componentTagPattern = /component-/
 		const componentTagPattern = /^component-/
 		const allElements = parentElement.getElementsByTagName('*')
+
 		for (const element of allElements) {
 			const elementTagName = element.tagName.toLowerCase()
 			if (componentTagPattern.test(elementTagName)) {
@@ -35,8 +40,10 @@ class RenderService {
 				const foundComponent = components.find(Component => {
 					const instance =
 						Component instanceof ChildComponent ? Component : new Component()
+
 					return instance.constructor.name.toLowerCase() === componentName
 				})
+
 				if (foundComponent) {
 					const componentContent =
 						foundComponent instanceof ChildComponent
@@ -45,12 +52,13 @@ class RenderService {
 					element.replaceWith(componentContent)
 				} else {
 					console.error(
-						`Component "${componentName}" not found in the provided components array`
+						`Component "${componentName}" not found in the provided components array.`
 					)
 				}
 			}
 		}
 	}
+
 	/**
 	 * @param {Object} moduleStyles
 	 * @param {string} element
@@ -58,27 +66,32 @@ class RenderService {
 	 */
 	#applyModuleStyles(moduleStyles, element) {
 		if (!element) return
-		const applyStyle = element => {
+
+		const applyStyles = element => {
 			for (const [key, value] of Object.entries(moduleStyles)) {
 				if (element.classList.contains(key)) {
-					element.classList.add(value)
 					element.classList.remove(key)
+					element.classList.add(value)
 				}
 			}
 		}
+
 		if (element.getAttribute('class')) {
-			applyStyle(element)
+			applyStyles(element)
 		}
+
 		const elements = element.querySelectorAll('*')
-		elements.forEach(applyStyle)
+		elements.forEach(applyStyles)
 	}
 }
 
 export default new RenderService()
+
 {
-	/* <div class="home">
-  <h1 class="text"></h1>
-  <component-heading></component-heading>
-  <component-card-info></component-card-info>
-</div> */
+	/* <div class='home'>
+	<h1 class='text'></h1>
+	<component-heading></component-heading>
+	<component-card-info></component-card-info>
+</div>
+ */
 }

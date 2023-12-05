@@ -1,6 +1,8 @@
 import { Layout } from '@/components/layout/layout.component'
 import { NotFound } from '@/components/screens/not-found/not-found.component'
 
+import { $R } from '../rquery/rquery.lib'
+
 import { ROUTES } from './routes.data'
 
 export class Router {
@@ -12,6 +14,7 @@ export class Router {
 		window.addEventListener('popstate', () => {
 			this.#handleRouteChange()
 		})
+
 		this.#handleRouteChange()
 		this.#handleLinks()
 	}
@@ -19,6 +22,7 @@ export class Router {
 	#handleLinks() {
 		document.addEventListener('click', event => {
 			const target = event.target.closest('a')
+
 			if (target) {
 				event.preventDefault()
 				this.navigate(target.href)
@@ -26,15 +30,15 @@ export class Router {
 		})
 	}
 
+	getCurrentPath() {
+		return window.location.pathname
+	}
+
 	navigate(path) {
-		if (path !== this.getCurrentPath) {
+		if (path !== this.getCurrentPath()) {
 			window.history.pushState({}, '', path)
 			this.#handleRouteChange()
 		}
-	}
-
-	getCurrentPath() {
-		return window.location.pathname
 	}
 
 	#handleRouteChange() {
@@ -46,20 +50,23 @@ export class Router {
 				component: NotFound
 			}
 		}
+
 		this.#currentRoute = route
 		this.#render()
 	}
 
 	#render() {
-		const component = new this.#currentRoute.component()
+		const component = new this.#currentRoute.component().render()
+
 		if (!this.#layout) {
 			this.#layout = new Layout({
 				router: this,
-				children: component.render()
-			})
-			document.getElementById('app').innerHTML = this.#layout.render()
+				children: component
+			}).render()
+
+			$R('#app').append(this.#layout)
 		} else {
-			document.querySelector('main').innerHTML = component.render()
+			$R('#content').html('').append(component)
 		}
 	}
 }
